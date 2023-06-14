@@ -1,5 +1,6 @@
 package hello.springmvc.basic.request;
 
+import hello.springmvc.basic.HelloData;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,10 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.awt.event.WindowFocusListener;
 import java.io.IOException;
@@ -41,7 +39,7 @@ public class RequestParamController {
     public String requestParamV2(@RequestParam("username") String username,
                                  @RequestParam("age") int age) {
         log.info("username={}, age={}", username, age);
-        return "ok"; //ok라는 view를 찾게된다.
+        return "ok"; // 기존에는 ok라는 view를 찾게된다.
     }
 
 
@@ -49,7 +47,7 @@ public class RequestParamController {
     public String requestParamV3(@RequestParam String username,
                                  @RequestParam int age) {
         log.info("username={}, age={}", username, age);
-        return "ok"; //ok라는 view를 찾게된다.
+        return "ok";
 
     }
 
@@ -79,11 +77,32 @@ public class RequestParamController {
     // Map or MultiMap 으로도 가능하다.
     @RequestMapping("/request-param-map")
     public String requestParamMap(@RequestParam Map<String, Object> paramMap) {
-        log.info("paramMap={}",paramMap);
+        log.info("paramMap={}", paramMap);
         return "ok";
 
     }
 
 
+    /** @ModelAttribute를 사용하면
+     * 요청 파라미터의 이름으로 객체의 프로퍼티를 찾는다.
+     * 그 후, setter를 호출해서 파라미터의 값을 바인딩한다.
+     * 다만 자료형이 맞지 않는 경우 BindingException이 발생한다.
+     * @ModelAtrribute 또한 생략이 가능하다.
+     */
+    @RequestMapping("/model-attribute-v1")
+    public String modelAttributeV1(@ModelAttribute HelloData data) {
+        log.info(data.toString());
+        return "ok";
+    }
 
+    /** 어노테이션 생략 시
+     * String, int Integer 등의 단순타입 -> @RequestParam
+     * 그 외 ->  @ModelAttribute
+     * 로 자동 적용된다.
+     */
+    @RequestMapping("/model-attribute-v2")
+    public String modelAttributeV2(HelloData data) {
+        log.info(data.toString());
+        return "ok";
+    }
 }
